@@ -1,0 +1,109 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                                 MT5 To Notion    |
+//|                                          Forex Robot Easy Team   |
+//|                                           forexroboteasy.com     |
+//+------------------------------------------------------------------+
+
+// Import necessary libraries
+#include <MT5Connector.mqh>
+#include <NotionConnector.mqh>
+
+//+------------------------------------------------------------------+
+//|                        Global Variables                           |
+//+------------------------------------------------------------------+
+MT5Connector mt5; // MT5 Connector instance
+NotionConnector notion; // Notion Connector instance
+
+//+------------------------------------------------------------------+
+//|                      OnInit Function                              |
+//+------------------------------------------------------------------+
+void OnInit()
+{
+    // Connect to MT5
+    mt5.Connect();
+
+    // Connect to Notion
+    notion.Connect();
+}
+
+//+------------------------------------------------------------------+
+//|                      OnDeinit Function                            |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Disconnect from MT5
+    mt5.Disconnect();
+
+    // Disconnect from Notion
+    notion.Disconnect();
+}
+
+//+------------------------------------------------------------------+
+//|                      OnTick Function                              |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Export trade-related data from MT5 to Notion
+    ExportTradeData();
+}
+
+//+------------------------------------------------------------------+
+//|                  ExportTradeData Function                         |
+//+------------------------------------------------------------------+
+void ExportTradeData()
+{
+    // Get running trades from MT5
+    const TradeInfo[] runningTrades = mt5.GetRunningTrades();
+
+    // Export running trades to Notion
+    notion.ExportRunningTrades(runningTrades);
+
+    // Get pending orders from MT5
+    const OrderInfo[] pendingOrders = mt5.GetPendingOrders();
+
+    // Export pending orders to Notion
+    notion.ExportPendingOrders(pendingOrders);
+
+    // Get trades from the last day from MT5
+    const TradeInfo[] tradesLastDay = mt5.GetTradesLastDay();
+
+    // Export trades from the last day to Notion
+    notion.ExportTradesLastDay(tradesLastDay);
+
+    // Get trades from the last week from MT5
+    const TradeInfo[] tradesLastWeek = mt5.GetTradesLastWeek();
+
+    // Export trades from the last week to Notion
+    notion.ExportTradesLastWeek(tradesLastWeek);
+
+    // Get trades from the last month from MT5
+    const TradeInfo[] tradesLastMonth = mt5.GetTradesLastMonth();
+
+    // Export trades from the last month to Notion
+    notion.ExportTradesLastMonth(tradesLastMonth);
+
+    // Get trades from a custom time range from MT5
+    const TradeInfo[] tradesCustomRange = mt5.GetTradesCustomRange(startTime, endTime);
+
+    // Export trades from a custom time range to Notion
+    notion.ExportTradesCustomRange(tradesCustomRange);
+
+    // Export selective field data to Notion
+    notion.ExportSelectiveFieldData(tradeData);
+
+    // Enable automatic updates between MT5 and Notion
+    notion.EnableAutomaticUpdates();
+
+    // Display success message
+    Print('Trade data exported successfully!');
+}
+
+//+------------------------------------------------------------------+
+//|                     Start Execution                               |
+//+------------------------------------------------------------------+
+void OnStart()
+{
+    // Execute export trade data function
+    ExportTradeData();
+}
